@@ -68,41 +68,12 @@ export function BottomNav() {
     { key: "profile", href: "/teacher", label: t.bottomNav.profile, icon: icons.profile },
   ];
 
-  const bookHref = inTeacherArea ? "/teacher/book" : "/#joy-band-qilish";
-
   const isActive = (href: string) => href === "/" && pathname === "/";
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95 lg:hidden">
-      <div className="relative mx-auto flex max-w-md items-center justify-between px-4 py-2">
-        {items.slice(0, 2).map((item) => (
-          <Link
-            key={item.key}
-            href={item.href}
-            className={`flex flex-1 flex-col items-center gap-0.5 py-1 text-[11px] font-medium ${
-              isActive(item.href)
-                ? "text-teal-600 dark:text-teal-400"
-                : "text-slate-500 dark:text-slate-400"
-            }`}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-5 w-5">
-              {item.icon}
-            </svg>
-            {item.label}
-          </Link>
-        ))}
-
-        <Link
-          href={bookHref}
-          aria-label={t.bottomNav.book}
-          className="mx-2 -mt-6 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-teal-500 text-white shadow-lg shadow-teal-500/30 hover:bg-teal-600"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-7 w-7">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14M5 12h14" />
-          </svg>
-        </Link>
-
-        {items.slice(2).map((item) => (
+      <div className="mx-auto flex max-w-md items-center justify-between px-4 py-2">
+        {items.map((item) => (
           <Link
             key={item.key}
             href={item.href}

@@ -94,6 +94,37 @@ export async function bulkImportInstitutions(text: string) {
   return { created, skipped, notFound };
 }
 
+export async function changeAdminPassword(input: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}) {
+  const user = await requireRole("ADMIN");
+
+  if (!input.currentPassword || !input.newPassword || !input.confirmPassword) {
+    throw new Error("Barcha maydonlarni to'ldiring");
+  }
+  if (input.newPassword !== input.confirmPassword) {
+    throw new Error("Yangi parollar mos kelmadi");
+  }
+  if (input.newPassword.length < 8) {
+    throw new Error("Yangi parol kamida 8 belgidan iborat bo'lishi kerak");
+  }
+
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  if (!dbUser?.passwordHash) {
+    throw new Error("Xatolik yuz berdi");
+  }
+
+  const valid = await bcrypt.compare(input.currentPassword, dbUser.passwordHash);
+  if (!valid) {
+    throw new Error("Joriy parol noto'g'ri");
+  }
+
+  const passwordHash = await bcrypt.hash(input.newPassword, 10);
+  await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+}
+
 export async function reassignDirector(formData: FormData) {
   await requireRole("ADMIN");
 

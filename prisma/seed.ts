@@ -232,7 +232,7 @@ const SUBJECTS = [
   "Ona tili va adabiyot",
   "Ingliz tili",
   "Tarix",
-  "Informatika",
+  "Informatika va AT",
   "Boshlang'ich ta'lim",
 ];
 

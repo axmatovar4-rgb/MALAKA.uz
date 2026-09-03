@@ -54,6 +54,11 @@ export async function getOfferings(subjectId: string, groupType: GroupType) {
   }));
 }
 
+// Each district gets at most this many accepted/pending seats per course
+// offering, so one district can't fill an entire month's capacity and shut
+// out teachers from elsewhere.
+const MAX_RESERVATIONS_PER_DISTRICT = 3;
+
 // A reservation only occupies a seat once an admin confirms it, so
 // reservedCount deliberately does NOT change here — only in
 // admin/reservation-actions.ts's confirmReservation.
@@ -67,6 +72,7 @@ export async function createReservation(offeringId: string) {
         where: { status: { not: "CANCELLED" } },
         select: { id: true, offering: { select: { startDate: true } } },
       },
+      institution: { select: { districtId: true } },
     },
   });
   if (!teacher) throw new ReservationError("O'qituvchi topilmadi");
@@ -85,6 +91,22 @@ export async function createReservation(offeringId: string) {
     });
     if (offering.reservedCount >= offering.capacity) {
       throw new ReservationError("Bu oyda bo'sh joy qolmadi");
+    }
+
+    const districtId = teacher.institution?.districtId;
+    if (districtId) {
+      const districtCount = await prisma.reservation.count({
+        where: {
+          offeringId,
+          status: { not: "CANCELLED" },
+          teacher: { institution: { districtId } },
+        },
+      });
+      if (districtCount >= MAX_RESERVATIONS_PER_DISTRICT) {
+        throw new ReservationError(
+          `Bu oy uchun tumaningizdan allaqachon ${MAX_RESERVATIONS_PER_DISTRICT} ta o'qituvchi joy band qilgan`,
+        );
+      }
     }
 
     const reservation = await prisma.reservation.create({

@@ -121,8 +121,8 @@ export default async function TeacherMenuPage() {
         <MenuRow icon="calendarCheck" title="Bandlovlarim" subtitle="Band qilgan kurs oyi va holatlari" href="/teacher#tarix" />
         <MenuRow icon="idCard" title="Pedagogik ma'lumotlar" subtitle="Maktab, fan, toifa va boshqa ma'lumotlar" href="/teacher#pedagogik-malumotlar" />
         <MenuRow icon="clock" title="Kurs tarixi" subtitle="Oldingi malaka oshirish kurslari" href="/teacher#tarix" />
-        <MenuRow icon="document" title="Hujjatlarim" subtitle="Yuklangan hujjatlar va sertifikatlar" comingSoon />
-        <MenuRow icon="document" title="Arizalarim" subtitle="Yuborilgan arizalar va ularning holati" comingSoon />
+        <MenuRow icon="document" title="Hujjatlarim" subtitle="Kerakli hujjatlar ro'yxati" href="/teacher/hujjatlarim" />
+        <MenuRow icon="document" title="Arizalarim" subtitle="Yuborilgan arizalar va ularning holati" href="/teacher/arizalarim" />
         <MenuRow icon="help" title="Yordam" subtitle="Yordam va qo'llab-quvvatlash" href="/teacher/yordam" />
 
         <form

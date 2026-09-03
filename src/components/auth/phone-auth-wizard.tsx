@@ -47,6 +47,9 @@ export function PhoneAuthWizard({ regions }: { regions: Option[] }) {
       try {
         const { devCode } = await requestOtp(phone);
         setDevCode(devCode);
+        // Test mode only (no real SMS provider yet) — the code is shown on
+        // screen anyway, so pre-filling it saves the user from retyping it.
+        setCode(devCode ?? "");
         setStep(2);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Xatolik yuz berdi");
