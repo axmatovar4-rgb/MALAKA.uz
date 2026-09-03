@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  DIRECTOR
+  TEACHER
+}
+
+enum QualificationCategory {
+  MUTAXASSIS
+  IKKINCHI_TOIFA
+  BIRINCHI_TOIFA
+  OLIY_TOIFA
+}
+
+enum GroupType {
+  RIVOJLANTIRUVCHI
+  YUKSALTIRUVCHI
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Region {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  districts District[]
+  createdAt DateTime   @default(now())
+}
+
+model District {
+  id           String        @id @default(cuid())
+  name         String
+  regionId     String?
+  region       Region?       @relation(fields: [regionId], references: [id])
+  institutions Institution[]
+  createdAt    DateTime      @default(now())
+
+  @@unique([regionId, name])
+}
+
+model Institution {
+  id         String   @id @default(cuid())
+  name       String
+  districtId String
+  district   District @relation(fields: [districtId], references: [id])
+  directorId String?  @unique
+  director   User?    @relation("InstitutionDirector", fields: [directorId], references: [id])
+  teachers   User[]   @relation("InstitutionTeachers")
+  createdAt  DateTime @default(now())
+}
+
+model Subject {
+  id        String           @id @default(cuid())
+  name      String           @unique
+  teachers  User[]
+  offerings CourseOffering[]
+  createdAt DateTime         @default(now())
+}
+
+model User {
+  id                    String                 @id @default(cuid())
+  name                  String
+  email                 String?                @unique
+  passwordHash          String?
+  role                  Role
+  phone                 String?                @unique
+  phoneVerifiedAt       DateTime?
+  institutionId         String?
+  institution           Institution?           @relation("InstitutionTeachers", fields: [institutionId], references: [id])
+  directs               Institution?           @relation("InstitutionDirector")
+  subjectId             String?
+  subject               Subject?               @relation(fields: [subjectId], references: [id])
+  qualificationCategory QualificationCategory?
+  workExperienceYears   Int?
+  categoryAwardedDate   DateTime?
+  nextAttestationDate   DateTime?
+  avatarUrl             String?
+  reservations          Reservation[]
+  reviews               Review[]
+  createdAt             DateTime               @default(now())
+}
+
+model CourseOffering {
+  id            String        @id @default(cuid())
+  subjectId     String
+  subject       Subject       @relation(fields: [subjectId], references: [id])
+  groupType     GroupType
+  monthLabel    String
+  year          Int
+  startDate     DateTime
+  capacity      Int           @default(25)
+  reservedCount Int           @default(0)
+  reservations  Reservation[]
+  createdAt     DateTime      @default(now())
+
+  @@unique([subjectId, groupType, year, monthLabel])
+}
+
+model Reservation {
+  id          String            @id @default(cuid())
+  teacherId   String
+  teacher     User              @relation(fields: [teacherId], references: [id])
+  offeringId  String
+  offering    CourseOffering    @relation(fields: [offeringId], references: [id])
+  status      ReservationStatus @default(PENDING)
+  smsSentAt   DateTime?
+  confirmedAt DateTime?
+  cancelledAt DateTime?
+  createdAt   DateTime          @default(now())
+
+  @@unique([teacherId, offeringId])
+}
+
+model PhoneVerification {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+model LoginAttempt {
+  id         String   @id @default(cuid())
+  identifier String
+  createdAt  DateTime @default(now())
+
+  @@index([identifier])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  teacherId String
+  teacher   User     @relation(fields: [teacherId], references: [id])
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+}
