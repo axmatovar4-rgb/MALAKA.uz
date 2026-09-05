@@ -234,6 +234,15 @@ const SUBJECTS = [
   "Tarix",
   "Informatika va AT",
   "Boshlang'ich ta'lim",
+  "Geografiya",
+  "Rus tili va adabiyoti (yoki Xorijiy tili — Olmon, Fransuz va h.k.)",
+  "Huquqshunoslik (Davlat va huquq asoslari)",
+  "Tarbiya",
+  "Chaqiriqqacha harbiy ta'lim (CHHT)",
+  "Jismoniy tarbiya",
+  "Tasviriy san'at",
+  "Musiqa madaniyati",
+  "Texnologiya (Mehnat ta'limi)",
 ];
 
 const MONTHS = [
