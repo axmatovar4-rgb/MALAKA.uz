@@ -42,7 +42,8 @@ export function AdminSearch() {
     });
   }
 
-  const hasResults = result && (result.users.length > 0 || result.institutions.length > 0);
+  const hasResults =
+    result && (result.users.length > 0 || result.institutions.length > 0 || result.subjects.length > 0);
 
   return (
     <div ref={containerRef} className="relative flex-1 max-w-sm">
@@ -92,7 +93,7 @@ export function AdminSearch() {
           )}
 
           {!isPending && result && result.institutions.length > 0 && (
-            <div>
+            <div className="mb-1">
               <p className="px-3 py-1 text-[11px] font-medium uppercase text-slate-400">Muassasalar</p>
               {result.institutions.map((i) => (
                 <Link
@@ -103,6 +104,23 @@ export function AdminSearch() {
                 >
                   <span className="font-medium text-slate-800 dark:text-slate-200">{i.name}</span>
                   <span className="ml-2 text-xs text-slate-400">{i.district.name}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {!isPending && result && result.subjects.length > 0 && (
+            <div>
+              <p className="px-3 py-1 text-[11px] font-medium uppercase text-slate-400">Fanlar</p>
+              {result.subjects.map((s) => (
+                <Link
+                  key={s.id}
+                  href={`/admin/subjects#subject-${s.id}`}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                >
+                  <span className="font-medium text-slate-800 dark:text-slate-200">{s.name}</span>
+                  <span className="ml-2 text-xs text-slate-400">{s._count.teachers} o&apos;qituvchi</span>
                 </Link>
               ))}
             </div>

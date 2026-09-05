@@ -98,9 +98,9 @@ export async function searchAdmin(query: string) {
   await requireRole("ADMIN");
 
   const q = query.trim();
-  if (q.length < 2) return { users: [], institutions: [] };
+  if (q.length < 2) return { users: [], institutions: [], subjects: [] };
 
-  const [users, institutions] = await Promise.all([
+  const [users, institutions, subjects] = await Promise.all([
     prisma.user.findMany({
       where: {
         OR: [
@@ -117,9 +117,14 @@ export async function searchAdmin(query: string) {
       select: { id: true, name: true, district: { select: { name: true } } },
       take: 5,
     }),
+    prisma.subject.findMany({
+      where: { name: { contains: q, mode: "insensitive" } },
+      select: { id: true, name: true, _count: { select: { teachers: true } } },
+      take: 5,
+    }),
   ]);
 
-  return { users, institutions };
+  return { users, institutions, subjects };
 }
 
 export async function changeAdminPassword(input: {
