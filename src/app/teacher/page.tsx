@@ -48,10 +48,44 @@ export default async function TeacherPage() {
     ? groupForCategory(teacher.qualificationCategory)
     : null;
 
+  // Reservation status changes (admin confirm/cancel) double as the
+  // teacher's notification feed — no separate Notification table needed.
+  // Older than this window just falls out of the list; the full history is
+  // still visible in "Malaka oshirish tarixi" below.
+  const NOTIFICATION_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+  const notificationCutoff = Date.now() - NOTIFICATION_WINDOW_MS;
+  const subjectName = teacher.subject?.name ?? "Kurs";
+  const notifications = teacher.reservations
+    .flatMap((r) => {
+      const course = `${subjectName} — ${r.offering.monthLabel} ${r.offering.year}`;
+      if (r.status === "CONFIRMED" && r.confirmedAt && r.confirmedAt.getTime() > notificationCutoff) {
+        return [
+          {
+            id: r.id,
+            type: "confirmed" as const,
+            text: `"${course}" kursiga joy band qilish so'rovingiz tasdiqlandi.`,
+            date: r.confirmedAt.toISOString(),
+          },
+        ];
+      }
+      if (r.status === "CANCELLED" && r.cancelledAt && r.cancelledAt.getTime() > notificationCutoff) {
+        return [
+          {
+            id: r.id,
+            type: "cancelled" as const,
+            text: `"${course}" kursiga bandlovingiz bekor qilindi.`,
+            date: r.cancelledAt.toISOString(),
+          },
+        ];
+      }
+      return [];
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return (
     <div className="min-h-screen bg-slate-50 pb-20 dark:bg-slate-950 lg:pb-0">
       <HashScroll />
-      <TeacherHeader userName={teacher.name} />
+      <TeacherHeader userName={teacher.name} notifications={notifications} />
 
       <main className="mx-auto max-w-2xl space-y-5 px-6 py-6">
         {/* Profile header card */}
