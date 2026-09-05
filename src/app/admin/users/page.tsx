@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireRole } from "@/lib/require-role";
 import { prisma } from "@/lib/prisma";
 import { categoryLabels } from "@/lib/qualification";
@@ -8,10 +9,24 @@ const roleLabels: Record<string, string> = {
   TEACHER: "O'qituvchi",
 };
 
-export default async function AdminUsersPage() {
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   await requireRole("ADMIN");
+  const { q } = await searchParams;
 
   const users = await prisma.user.findMany({
+    where: q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q } },
+            { email: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
     include: { institution: { include: { district: true } }, subject: true },
     orderBy: { createdAt: "desc" },
   });
@@ -23,7 +38,16 @@ export default async function AdminUsersPage() {
           Foydalanuvchilar ({users.length})
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Tizimdagi barcha hisoblar — admin, direktor va o&apos;qituvchilar
+          {q ? (
+            <>
+              &quot;{q}&quot; bo&apos;yicha natijalar —{" "}
+              <Link href="/admin/users" className="text-teal-600 hover:underline dark:text-teal-400">
+                barchasini ko&apos;rsatish
+              </Link>
+            </>
+          ) : (
+            "Tizimdagi barcha hisoblar — admin, direktor va o'qituvchilar"
+          )}
         </p>
       </div>
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { signOutAction } from "@/app/admin/actions";
+import { AdminSearch } from "@/components/admin/admin-search";
 
 function NotificationsBell({ pendingCount }: { pendingCount: number }) {
   const [open, setOpen] = useState(false);
@@ -99,18 +100,7 @@ export function AdminTopBar({
 }) {
   return (
     <header className="flex items-center gap-4 border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-800 dark:bg-slate-900">
-      <div className="relative flex-1 max-w-sm">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
-          <circle cx="11" cy="11" r="7" strokeWidth={1.5} />
-          <path strokeLinecap="round" strokeWidth={1.5} d="M21 21l-4.3-4.3" />
-        </svg>
-        <input
-          type="search"
-          disabled
-          placeholder="Qidirish (tez orada)..."
-          className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-500 placeholder:text-slate-400 disabled:cursor-not-allowed dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400"
-        />
-      </div>
+      <AdminSearch />
 
       <div className="flex items-center gap-2">
         <NotificationsBell pendingCount={pendingCount} />

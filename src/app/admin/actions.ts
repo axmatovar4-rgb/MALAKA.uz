@@ -94,6 +94,34 @@ export async function bulkImportInstitutions(text: string) {
   return { created, skipped, notFound };
 }
 
+export async function searchAdmin(query: string) {
+  await requireRole("ADMIN");
+
+  const q = query.trim();
+  if (q.length < 2) return { users: [], institutions: [] };
+
+  const [users, institutions] = await Promise.all([
+    prisma.user.findMany({
+      where: {
+        OR: [
+          { name: { contains: q, mode: "insensitive" } },
+          { phone: { contains: q } },
+          { email: { contains: q, mode: "insensitive" } },
+        ],
+      },
+      select: { id: true, name: true, role: true, phone: true, email: true },
+      take: 5,
+    }),
+    prisma.institution.findMany({
+      where: { name: { contains: q, mode: "insensitive" } },
+      select: { id: true, name: true, district: { select: { name: true } } },
+      take: 5,
+    }),
+  ]);
+
+  return { users, institutions };
+}
+
 export async function changeAdminPassword(input: {
   currentPassword: string;
   newPassword: string;
