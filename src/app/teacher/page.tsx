@@ -1,6 +1,6 @@
 import { requireRole } from "@/lib/require-role";
 import { prisma } from "@/lib/prisma";
-import { TeacherHeader } from "@/components/teacher/teacher-header";
+import { TeacherHeader, type TeacherNotification } from "@/components/teacher/teacher-header";
 import { BottomNav } from "@/components/marketing/bottom-nav";
 import { HashScroll } from "@/components/teacher/hash-scroll";
 import { categoryLabels, groupDescriptions, groupForCategory, groupLabels } from "@/lib/qualification";
@@ -56,7 +56,7 @@ export default async function TeacherPage() {
   const notificationCutoff = Date.now() - NOTIFICATION_WINDOW_MS;
   const subjectName = teacher.subject?.name ?? "Kurs";
   const notifications = teacher.reservations
-    .flatMap((r) => {
+    .flatMap((r): TeacherNotification[] => {
       const course = `${subjectName} — ${r.offering.monthLabel} ${r.offering.year}`;
       if (r.status === "CONFIRMED" && r.confirmedAt && r.confirmedAt.getTime() > notificationCutoff) {
         return [
