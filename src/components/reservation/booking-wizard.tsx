@@ -84,7 +84,8 @@ export function BookingWizard({
               Bo&apos;sh kurs oylari
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Har bir oyda maksimal 25 nafar o&apos;qituvchi tasdiqlanishi mumkin.
+              Har bir oyda maksimal 25 nafar o&apos;qituvchi tasdiqlanishi mumkin. Har bir
+              hududdan faqat 3 tadan o&apos;qituvchi band qilishi mumkin.
             </p>
             <div className="space-y-3">
               {offerings.map((offering) => {

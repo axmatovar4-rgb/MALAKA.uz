@@ -104,7 +104,7 @@ export async function createReservation(offeringId: string) {
       });
       if (districtCount >= MAX_RESERVATIONS_PER_DISTRICT) {
         throw new ReservationError(
-          `Bu oy uchun tumaningizdan allaqachon ${MAX_RESERVATIONS_PER_DISTRICT} ta o'qituvchi joy band qilgan`,
+          `Har bir hududdan faqat ${MAX_RESERVATIONS_PER_DISTRICT} tadan o'qituvchi band qilishi mumkin. Bu oy uchun tumaningizning limiti to'lgan.`,
         );
       }
     }
